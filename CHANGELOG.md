@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.7.0 - 2026-09-24
+
+### Added
+
+* Inline workspace configuration via VS Code settings
+  Added the `vsconan.workspace.config` setting to define the VSConan workspace configuration (`commandContainer`/`presetContainer`) directly in the VS Code settings file. When set, it takes precedence over the config file referenced by `vsconan.workspace.configPath`; the separate config file remains fully supported when the setting is absent.
+
 ## 1.6.0 - 2026-09-24
 
 ### Added

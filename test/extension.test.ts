@@ -119,6 +119,19 @@ describe("extension", () => {
             expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
         });
 
+        it("should not prompt when the workspace already defines an inline settings config", () => {
+            jest.spyOn(utils.vsconan, "initializeGlobalArea").mockImplementation(() => undefined);
+            vscode.workspace.setWorkspaceFolders([{ uri: { fsPath: "/path/to/ws" }, name: "ws", index: 0 }]);
+            jest.spyOn(utils.conan, "isFolderConanProject").mockReturnValue(true);
+            jest.spyOn(utils.vsconan, "getWorkspaceConfigPath").mockReturnValue("/path/to/ws/.vsconan/config.json");
+            jest.spyOn(utils.vsconan, "hasWorkspaceSettingsConfig").mockReturnValue(true);
+            jest.spyOn(fs, "existsSync").mockReturnValue(false);
+
+            activate(context);
+
+            expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+        });
+
         it("should do nothing when the workspace is not a conan project", () => {
             jest.spyOn(utils.vsconan, "initializeGlobalArea").mockImplementation(() => undefined);
             vscode.workspace.setWorkspaceFolders([{ uri: { fsPath: "/path/to/ws" }, name: "ws", index: 0 }]);

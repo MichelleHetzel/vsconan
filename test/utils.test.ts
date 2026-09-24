@@ -2,6 +2,7 @@ import * as vscode from "./mocks/vscode";
 jest.mock('vscode', () => vscode, { virtual: true });
 
 import * as utils from "../src/utils/utils";
+import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 
@@ -117,6 +118,72 @@ describe("getWorkspaceConfigPath", () => {
         const configPath = utils.vsconan.getWorkspaceConfigPath(workspacePath);
 
         expect(configPath).toEqual(absolutePath);
+    });
+});
+
+describe("hasWorkspaceSettingsConfig / getWorkspaceConfig", () => {
+    const workspacePath = path.normalize("/path/to/workspace");
+    let getConfigurationMock: jest.Mock;
+
+    beforeEach(() => {
+        getConfigurationMock = jest.fn();
+        (vscode as any).workspace = { getConfiguration: getConfigurationMock };
+        (vscode as any).Uri = { file: (fsPath: string) => ({ fsPath }) };
+    });
+
+    it("should report no inline settings config when the setting is unset", () => {
+        const get = jest.fn().mockReturnValue(undefined);
+        getConfigurationMock.mockReturnValue({ get });
+
+        expect(utils.vsconan.hasWorkspaceSettingsConfig(workspacePath)).toBe(false);
+    });
+
+    it("should report an inline settings config when the setting is set", () => {
+        const get = jest.fn().mockReturnValue({ commandContainer: {} });
+        getConfigurationMock.mockReturnValue({ get });
+
+        expect(utils.vsconan.hasWorkspaceSettingsConfig(workspacePath)).toBe(true);
+    });
+
+    it("should build the config from the inline setting when present, without touching the file", () => {
+        const inlineConfig = { presetContainer: { release: { conanRecipe: "recipes/conanfile.py" } } };
+        const get = jest.fn().mockImplementation((key: string) => key === "workspace.config" ? inlineConfig : undefined);
+        getConfigurationMock.mockReturnValue({ get });
+        const existsSyncMock = jest.spyOn(fs, "existsSync");
+
+        const configWorkspace = utils.vsconan.getWorkspaceConfig(workspacePath);
+
+        expect(configWorkspace?.commandContainer.create[0].name).toBe("release");
+        expect(existsSyncMock).not.toHaveBeenCalled();
+
+        existsSyncMock.mockRestore();
+    });
+
+    it("should fall back to the config file when the inline setting is absent", () => {
+        const get = jest.fn().mockImplementation((key: string, defaultValue?: any) => key === "workspace.config" ? undefined : defaultValue);
+        getConfigurationMock.mockReturnValue({ get });
+        const existsSyncMock = jest.spyOn(fs, "existsSync").mockReturnValue(true);
+        const readFileSyncMock = jest.spyOn(fs, "readFileSync").mockReturnValue(JSON.stringify({
+            presetContainer: { release: { conanRecipe: "recipes/conanfile.py" } }
+        }));
+
+        const configWorkspace = utils.vsconan.getWorkspaceConfig(workspacePath);
+
+        expect(existsSyncMock).toHaveBeenCalledWith(path.join(workspacePath, ".vsconan", "config.json"));
+        expect(configWorkspace?.commandContainer.create[0].name).toBe("release");
+
+        existsSyncMock.mockRestore();
+        readFileSyncMock.mockRestore();
+    });
+
+    it("should return undefined when neither the inline setting nor the config file exist", () => {
+        const get = jest.fn().mockImplementation((key: string, defaultValue?: any) => key === "workspace.config" ? undefined : defaultValue);
+        getConfigurationMock.mockReturnValue({ get });
+        const existsSyncMock = jest.spyOn(fs, "existsSync").mockReturnValue(false);
+
+        expect(utils.vsconan.getWorkspaceConfig(workspacePath)).toBeUndefined();
+
+        existsSyncMock.mockRestore();
     });
 });
 

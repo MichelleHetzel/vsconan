@@ -74,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
             let wsPath = wsList[i].uri.fsPath;
             let configPath = utils.vsconan.getWorkspaceConfigPath(wsPath);
 
-            if (utils.conan.isFolderConanProject(wsPath) && !fs.existsSync(configPath!)) {
+            if (utils.conan.isFolderConanProject(wsPath) && !utils.vsconan.hasWorkspaceSettingsConfig(wsPath) && !fs.existsSync(configPath!)) {
 
                 vscode.window
                     .showInformationMessage(`The workspace '${wsList[i].name}' is detected as a conan project. Do you want to configure this workspace?`, ...["Yes", "Not Now"])

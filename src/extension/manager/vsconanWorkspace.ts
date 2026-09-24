@@ -5,7 +5,6 @@ import { ConanAPIManager } from '../../conans/api/conanAPIManager';
 import { CommandBuilder } from "../../conans/command/commandBuilder";
 import { CommandBuilderFactory } from "../../conans/command/commandBuilderFactory";
 import { ConfigCommand, ConfigCommandBuild, ConfigCommandCreate, ConfigCommandInstall, ConfigCommandPackage, ConfigCommandPackageExport, ConfigCommandSource } from '../../conans/command/configCommand';
-import { ConfigWorkspace } from '../../conans/workspace/configWorkspace';
 import * as constants from "../../utils/constants";
 import * as utils from '../../utils/utils';
 import { ConanProfileConfiguration } from "../settings/model";
@@ -237,12 +236,9 @@ export class VSConanWorkspaceManager extends ExtensionManager {
         // Check the configuration and executed pre selected command based on this function argument
         let wsPath = await utils.workspace.selectWorkspace();
 
-        let configPath = utils.vsconan.getWorkspaceConfigPath(wsPath!);
+        let configWorkspace = utils.vsconan.getWorkspaceConfig(wsPath!);
 
-        if (fs.existsSync(configPath)) {
-            let configText = fs.readFileSync(configPath, 'utf8');
-            let configWorkspace = ConfigWorkspace.fromJson(configText);
-
+        if (configWorkspace) {
             let conanCommand = "";
             let commandBuilder: CommandBuilder | undefined;
             let conanVersion: string | null = "";
@@ -330,7 +326,7 @@ export class VSConanWorkspaceManager extends ExtensionManager {
             }
         }
         else {
-            vscode.window.showWarningMessage(`Unable to find configuration file in the workspace '${wsPath}'`);
+            vscode.window.showWarningMessage(`Unable to find configuration for the workspace '${wsPath}'`);
         }
     }
 

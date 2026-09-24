@@ -2,7 +2,7 @@
     "name": "vsconan",
     "displayName": "VSConan",
     "description": "Conan local cache and workspace manager.",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "publisher": "afri-bit",
     "repository": {
         "type": "git",
@@ -792,9 +792,18 @@
                         "default": true
                     },
                     "vsconan.workspace.configPath": {
-                        "markdownDescription": "Path to the VSConan workspace configuration file. Relative paths are resolved from the workspace folder; absolute paths are used unchanged.",
+                        "markdownDescription": "Path to the VSConan workspace configuration file. Relative paths are resolved from the workspace folder; absolute paths are used unchanged. Ignored when `#vsconan.workspace.config#` is set.",
                         "type": "string",
                         "default": ".vsconan/config.json",
+                        "scope": "resource"
+                    },
+                    "vsconan.workspace.config": {
+                        "markdownDescription": "Inline VSConan workspace configuration (same shape as the `.vsconan/config.json` file, e.g. `commandContainer`/`presetContainer`). When set, this takes precedence over the config file referenced by `#vsconan.workspace.configPath#`.",
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "default": null,
                         "scope": "resource"
                     }
                 }
