@@ -9,6 +9,21 @@ describe("Workspace configuration", () => {
         expect(configWorkspace.presetContainer).toBeUndefined();
     });
 
+    it("should build a config from an already-parsed object, e.g. a settings.json entry", () => {
+        const configWorkspace = ConfigWorkspace.fromObject({
+            presetContainer: {
+                "release": {
+                    conanRecipe: "recipes/conanfile.py",
+                    installArgs: ["--build=missing"]
+                }
+            }
+        } as unknown as ConfigWorkspace);
+
+        expect(configWorkspace.commandContainer.create[0].name).toBe("release");
+        expect(configWorkspace.commandContainer.create[0].conanRecipe).toBe("recipes/conanfile.py");
+        expect(configWorkspace.commandContainer.install[0].args).toEqual(["--build=missing"]);
+    });
+
     it("should use shared arguments unless a command-specific override is defined", () => {
         const configWorkspace = ConfigWorkspace.fromJson(JSON.stringify({
             commandContainer: {

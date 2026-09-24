@@ -49,6 +49,39 @@ export namespace vsconan {
     }
 
     /**
+     * Whether the workspace defines its VSConan configuration inline via the
+     * `vsconan.workspace.config` setting instead of (or in addition to) the config file.
+     */
+    export function hasWorkspaceSettingsConfig(workspacePath: string): boolean {
+        const inlineConfig = vscode.workspace.getConfiguration("vsconan", vscode.Uri.file(workspacePath))
+            .get<object>("workspace.config");
+
+        return inlineConfig !== undefined && inlineConfig !== null;
+    }
+
+    /**
+     * Resolve the effective workspace configuration. The `vsconan.workspace.config`
+     * setting entry takes precedence when present; otherwise falls back to the
+     * config file at `getWorkspaceConfigPath`. Returns undefined if neither is available.
+     */
+    export function getWorkspaceConfig(workspacePath: string): ConfigWorkspace | undefined {
+        const inlineConfig = vscode.workspace.getConfiguration("vsconan", vscode.Uri.file(workspacePath))
+            .get<object>("workspace.config");
+
+        if (inlineConfig !== undefined && inlineConfig !== null) {
+            return ConfigWorkspace.fromObject(inlineConfig as ConfigWorkspace);
+        }
+
+        const configFilePath = getWorkspaceConfigPath(workspacePath);
+        if (fs.existsSync(configFilePath)) {
+            const configText = fs.readFileSync(configFilePath, 'utf8');
+            return ConfigWorkspace.fromJson(configText);
+        }
+
+        return undefined;
+    }
+
+    /**
      * Function to initialize the global area such as creating .vsconan folder
      * in the HOME folder, creating a temporary folder and creating a default global
      * config file

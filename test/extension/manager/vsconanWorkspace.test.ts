@@ -9,6 +9,7 @@ import { ConanAPIManager } from "../../../src/conans/api/conanAPIManager";
 import { CommandBuilderFactory } from "../../../src/conans/command/commandBuilderFactory";
 import { VSConanWorkspaceEnvironment } from "../../../src/extension/manager/workspaceEnvironment";
 import { SettingsPropertyManager } from "../../../src/extension/settings/settingsPropertyManager";
+import { ConfigWorkspace } from "../../../src/conans/workspace/configWorkspace";
 import { VSConanWorkspaceManager } from "../../../src/extension/manager/vsconanWorkspace";
 import * as utils from "../../../src/utils/utils";
 
@@ -154,16 +155,14 @@ describe("VSConanWorkspaceManager", () => {
     describe("executeConanCommand (config path lookup)", () => {
         it("should execute a command from a preset-only configuration", async () => {
             const selectWorkspaceMock = jest.spyOn(utils.workspace, "selectWorkspace").mockResolvedValue("/path/to/ws");
-            const getWorkspaceConfigPathMock = jest.spyOn(utils.vsconan, "getWorkspaceConfigPath").mockReturnValue("/path/to/ws/.vsconan/config.json");
-            const existsSyncMock = jest.spyOn(fs, "existsSync").mockReturnValue(true);
-            const readFileSyncMock = jest.spyOn(fs, "readFileSync").mockReturnValue(JSON.stringify({
+            const getWorkspaceConfigMock = jest.spyOn(utils.vsconan, "getWorkspaceConfig").mockReturnValue(ConfigWorkspace.fromJson(JSON.stringify({
                 presetContainer: {
                     release: {
                         conanRecipe: "recipes/conanfile.py",
                         installArgs: ["--build=missing"]
                     }
                 }
-            }));
+            })));
             const buildCommandInstall = jest.fn().mockReturnValue(["recipes/conanfile.py", "--build=missing"]);
             const commandBuilderFactoryMock = jest.spyOn(CommandBuilderFactory, "getCommandBuilder").mockReturnValue({
                 buildCommandInstall
@@ -190,28 +189,23 @@ describe("VSConanWorkspaceManager", () => {
             expect(executeCommandMock).toHaveBeenCalledWith("conan install", ["recipes/conanfile.py", "--build=missing"], outputChannel);
 
             selectWorkspaceMock.mockRestore();
-            getWorkspaceConfigPathMock.mockRestore();
-            existsSyncMock.mockRestore();
-            readFileSyncMock.mockRestore();
+            getWorkspaceConfigMock.mockRestore();
             commandBuilderFactoryMock.mockRestore();
             executeCommandMock.mockRestore();
         });
 
         it("should show a warning when no config file is found in the workspace", async () => {
             const selectWorkspaceMock = jest.spyOn(utils.workspace, "selectWorkspace").mockResolvedValue("/path/to/ws");
-            const getWorkspaceConfigPathMock = jest.spyOn(utils.vsconan, "getWorkspaceConfigPath").mockReturnValue("/path/to/ws/.vsconan/config.json");
-            const existsSyncMock = jest.spyOn(fs, "existsSync").mockReturnValue(false);
+            const getWorkspaceConfigMock = jest.spyOn(utils.vsconan, "getWorkspaceConfig").mockReturnValue(undefined);
 
             createManager();
             await registeredCommands["vsconan.conan.create"]();
 
-            expect(getWorkspaceConfigPathMock).toHaveBeenCalledWith("/path/to/ws");
-            expect(existsSyncMock).toHaveBeenCalledWith("/path/to/ws/.vsconan/config.json");
-            expect(vscode.window.showWarningMessage).toHaveBeenCalledWith("Unable to find configuration file in the workspace '/path/to/ws'");
+            expect(getWorkspaceConfigMock).toHaveBeenCalledWith("/path/to/ws");
+            expect(vscode.window.showWarningMessage).toHaveBeenCalledWith("Unable to find configuration for the workspace '/path/to/ws'");
 
             selectWorkspaceMock.mockRestore();
-            getWorkspaceConfigPathMock.mockRestore();
-            existsSyncMock.mockRestore();
+            getWorkspaceConfigMock.mockRestore();
         });
     });
 });

@@ -23,6 +23,14 @@ export class ConfigWorkspace {
             throw new SyntaxError(`Invalid workspace configuration: ${details}`);
         }
 
+        return ConfigWorkspace.fromObject(configWorkspace);
+    }
+
+    /**
+     * Build a ConfigWorkspace out of an already-parsed object, e.g. an entry
+     * read directly from the VS Code settings file rather than a JSON file.
+     */
+    public static fromObject(configWorkspace: ConfigWorkspace): ConfigWorkspace {
         const commandContainer = configWorkspace.commandContainer || new CommandContainer();
         const workflows = configWorkspace.presetContainer;
 

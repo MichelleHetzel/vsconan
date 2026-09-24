@@ -19,7 +19,7 @@
 <img src="https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/icon/vsconan-logo.png" width="50%">
 </p>
 
-## Introduction 
+## Introduction
 
 The **VSConan** extension helps you manage the conan local cache on your machine. It gives you easy access to your local cache and allows you to manage it by using integrated explorer in the Visual Studio Code without typing a single line of command in the terminal. **VSConan** provides variety of features, including a quick overview of installed packages, renaming and duplicating profiles, enabling and disabling remotes and more. For more information see [Extension Features](#extension-features).
 
@@ -33,7 +33,7 @@ The **VSConan** extension helps you manage the conan local cache on your machine
 
 **VSConan** contributes to official VS Code configurations (`settings.json`), where you can configure the environment to use this extension.
 As a starting point you can configure following settings, that are the core settings and provide you a high flexibility to use this extension:
-  * `vsconan.conan.profile.configurations`  
+  * `vsconan.conan.profile.configurations`
     In this section of settings you can store multiple configuration profiles, that contain necessary information to use `conan` from your system. Let's take a look at the following example:
     ```json
     "vsconan.conan.profile.configurations": {
@@ -53,13 +53,13 @@ As a starting point you can configure following settings, that are the core sett
     }
     ```
 
-    In the example above, we defined the `foo` and `bar` profile to start using this extension. Each profile has different configuration for the python interpreter and the conan executable. One thing that we notice here is that we can select the conan version, we want to use, `1` or `2`. This information is crucial for the extension in order to get the correct API. 
+    In the example above, we defined the `foo` and `bar` profile to start using this extension. Each profile has different configuration for the python interpreter and the conan executable. One thing that we notice here is that we can select the conan version, we want to use, `1` or `2`. This information is crucial for the extension in order to get the correct API.
 
     > **NOTE**: Make sure you combine the `conanVersion` and its binary accordingly. Otherwise it will have strange behaviours or things might even not work properly.
 
-    Using `conanUserHome` we can overwrite the current conan user home directory. This attribute is optional and has default value of `null`. In the example of `foo`, `conanUserHome` is not defined, which means that the conan user home directory uses the default path or predefined environment variable (See [Environment Variables](https://docs.conan.io/2/reference/environment.html)). 
-    
-  * `vsconan.conan.profile.default`  
+    Using `conanUserHome` we can overwrite the current conan user home directory. This attribute is optional and has default value of `null`. In the example of `foo`, `conanUserHome` is not defined, which means that the conan user home directory uses the default path or predefined environment variable (See [Environment Variables](https://docs.conan.io/2/reference/environment.html)).
+
+  * `vsconan.conan.profile.default`
     After defining `foo` and `bar` profiles, now it is time for us to choose which configuration we want to use currently.
 
     ```json
@@ -77,18 +77,18 @@ The **VSConan** extension contributes a Conan Explorer view to VS Code. The Cona
 
 #### Conan Recipe
 
-In the Conan Recipe explorer you can have an overview of the installed conan recipe in your local cache. 
+In the Conan Recipe explorer you can have an overview of the installed conan recipe in your local cache.
 
 ![](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/conan_recipe_treeview.png)
 
 As you can see in the picture above, there are several inline options on each item in the treeview.
-* _Information_  
-  Open a web view in VS Code editor, that contains information about this selected recipe. Currently the web view only shows a plain JSON text, that is obtained from the Conan CLI. 
-* _Open in Explorer_  
+* _Information_
+  Open a web view in VS Code editor, that contains information about this selected recipe. Currently the web view only shows a plain JSON text, that is obtained from the Conan CLI.
+* _Open in Explorer_
   Open the the recipe path in the explorer
-* _Open in VS Code_  
+* _Open in VS Code_
   Open the selected recipe in a new VS Code window
-* _Remove_  
+* _Remove_
   Remove the selected recipe
 #### Conan Binary Package
 
@@ -97,11 +97,11 @@ By selecting the recipe, the corresponded binary packages will be shown in this 
 ![](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/conan_package_treeview.png)
 
 Each item of this treeview has following options to offer:
-* _Open in Explorer_  
+* _Open in Explorer_
   Open the selected binary package in the explorer
-* _Open in VS Code_  
+* _Open in VS Code_
   Open the selected binary package in a new VS Code window
-* _Remove_  
+* _Remove_
   Remove the selected binary package
 
 #### Conan Profile
@@ -111,46 +111,47 @@ All the profiles that you saved on your machine will be listed in this explorer.
 ![](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/conan_profile_treeview.png)
 
 As the other treeviews, each item of this treeview contains several functionalities:
-* _Edit_  
+* _Edit_
   Open the selected profile in the VS Code editor
-* _Open in Explorer_  
+* _Open in Explorer_
   Open the selected profile in the file explorer
-* _Rename_  
+* _Rename_
   Rename the selected profile
-* _Duplicate_  
+* _Duplicate_
   If you want to change a small detail from a certain profile but you do not want to lose the original profile, we provide you this duplicate option to fulfill your purpose.
-* _Remove_  
+* _Remove_
   Remove the selected profile
 
 #### Conan Remote
 
-Finally we come to the last part of this explorer, which is the explorer of the conan remote.  
+Finally we come to the last part of this explorer, which is the explorer of the conan remote.
 The explorer itself provides you following options:
-* _Edit_  
+* _Edit_
   Since the collection of remotes in conan is defined in one file called `remotes.json`, this option is not available of each remote item in the treeview. This will open `remotes.json` file in the VS Code editor instead.
-* _Add_  
+* _Add_
   Add a new remote
 
 ![](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/conan_remote_treeview.png)
 
 As other treeview, each item is equipped with several options, that you can use to maintain your remotes.
-* _Rename Remote_  
+* _Rename Remote_
   Rename the selected remote
-* _Update URL_  
+* _Update URL_
   Modify the URL in the selected remote
-* _Enable Remote_  
-  Enable the selected remote. Enabled remotes can be seen from the icon next to the remote name. The remote `conancenter` in the picture above is enabled. 
-* _Disable Remote_  
-  Disable the selected remote. Disabled remotes can be seen from the icon next to the remote name. The remote `anyOtherRemote` in the picture above is disabled. 
-* _Remove Remote_  
+* _Enable Remote_
+  Enable the selected remote. Enabled remotes can be seen from the icon next to the remote name. The remote `conancenter` in the picture above is enabled.
+* _Disable Remote_
+  Disable the selected remote. Disabled remotes can be seen from the icon next to the remote name. The remote `anyOtherRemote` in the picture above is disabled.
+* _Remove Remote_
   Remove the selected remote
 
 ### Conan Workspace
 
-The Conan Workspace feature provides you configuration file, that can be used to execute predefined conan flow command and its arguments. The configuration will be stored under `.vsconan` folder in your workspace.  
+The Conan Workspace feature provides you configuration file, that can be used to execute predefined conan flow command and its arguments. The configuration will be stored under `.vsconan` folder in your workspace.
 If you work a lot with conan and use VS Code as your IDE, this feature can be really beneficial for you. It can spare you some seconds by avoiding to type same command, maybe with different arguments in your terminal over and over again. Instead you can save the command that you want to execute in the configuration and reuse in the next execution. In addition to that, the configuration file is reusable, and can be distributed to other people, if you work in a team.
 
 Set `vsconan.workspace.configPath` to store the configuration elsewhere. Relative paths are resolved from the workspace root; absolute paths are used unchanged. The default is `.vsconan/config.json`.
+You can also define the workspace configuration inline with the `vsconan.workspace.config` setting in VS Code settings. It uses the same `commandContainer` or `presetContainer` format as `.vsconan/config.json` and takes precedence over `vsconan.workspace.configPath` when set.
 
 ![Recording of VSConan Workspace](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/demo_workspace.gif)
 
@@ -158,7 +159,7 @@ Set `vsconan.workspace.configPath` to store the configuration elsewhere. Relativ
 
 ![](https://raw.githubusercontent.com/afri-bit/vsconan/main/resources/img/prompt_conan_project.png)
 
-If you choose yes, **VSConan** will generate a default configuration file in your workspace to start with.  
+If you choose yes, **VSConan** will generate a default configuration file in your workspace to start with.
 If you want to configure your workspace manually, we also provide you possibility to create a default configuration file using VS Code command `VSConan: Create Workspace Configuration (JSON)`.
 
 Currently supported conan command for configuration file:
@@ -307,9 +308,9 @@ This option is enabled by default and can be managed by `vsconan.conan.env.doten
 
 ### Additional Support Features
 
-* `VSConan: Create Workspace Configuration (JSON)`  
+* `VSConan: Create Workspace Configuration (JSON)`
   Create workspace configuration file
-* `VSConan: Open Workspace Configuration (JSON)`  
+* `VSConan: Open Workspace Configuration (JSON)`
   Open the workspace configuration file in the editor
 
 Further information of current supported features is available [here](doc/FEATURES.md).
